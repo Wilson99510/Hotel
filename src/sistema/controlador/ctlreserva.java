@@ -40,7 +40,7 @@ public class ctlreserva {
                 "r.idempleado,(select nombre from usuario where idpersona=r.idempleado)as nempleado,"+
                 "(select apellido from usuario where idpersona=r.idempleado)as apempleado,"+
                 "r.tipo_reserva,r.fecha_reserva,r.fecha_entrada,r.fecha_salida,"+
-                "r.costo_reserva,r.estado from reserva r inner join habitacion h on r.idhabitacion=h.idhabitacion where r.fecha_reserva like '%"+buscar+"%' order by idreserva desc"; //el "desc" es de manera descendiente, para que los productos mas recientes aparezcan al inicio
+                "r.costo_reserva,r.estado from reserva r inner join habitacion h on r.idhabitacion=h.idhabitacion where r.fecha_reserva like '%"+buscar+"%' order by idreserva desc"; //el "desc" es de manera descendiente, para que las reservas mas recientes aparezcan al inicio
         
         try {
             Statement st= con.createStatement();

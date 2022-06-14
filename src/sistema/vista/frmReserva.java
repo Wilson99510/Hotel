@@ -36,15 +36,15 @@ public class frmReserva extends javax.swing.JInternalFrame {
         tablalistado.getColumnModel().getColumn(0).setMaxWidth(0); 
         tablalistado.getColumnModel().getColumn(0).setMinWidth(0); 
         tablalistado.getColumnModel().getColumn(0).setPreferredWidth(0);
-        
+                                    // la columna a no mostrar es de idhabitacion
         tablalistado.getColumnModel().getColumn(1).setMaxWidth(0); 
         tablalistado.getColumnModel().getColumn(1).setMinWidth(0); 
         tablalistado.getColumnModel().getColumn(1).setPreferredWidth(0);
-        
+                                    // la columna a no mostrar es de idcliente
         tablalistado.getColumnModel().getColumn(3).setMaxWidth(0); 
         tablalistado.getColumnModel().getColumn(3).setMinWidth(0); 
         tablalistado.getColumnModel().getColumn(3).setPreferredWidth(0);
-        
+                                    // la columna a no mostrar es de idempleado
         tablalistado.getColumnModel().getColumn(5).setMaxWidth(0); 
         tablalistado.getColumnModel().getColumn(5).setMinWidth(0); 
         tablalistado.getColumnModel().getColumn(5).setPreferredWidth(0);
@@ -362,7 +362,7 @@ public class frmReserva extends javax.swing.JInternalFrame {
         cboTipo_reserva.setBackground(new java.awt.Color(102, 102, 102));
         cboTipo_reserva.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         cboTipo_reserva.setForeground(new java.awt.Color(255, 255, 255));
-        cboTipo_reserva.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "VIP", "FAMILIAR", "ALQUILER", " " }));
+        cboTipo_reserva.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "INDIVIDUAL", "VIP", "FAMILIAR" }));
         cboTipo_reserva.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboTipo_reservaActionPerformed(evt);

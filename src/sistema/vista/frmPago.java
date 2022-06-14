@@ -29,7 +29,7 @@ public class frmPago extends javax.swing.JInternalFrame {
      */
     public frmPago() {
         initComponents();
-        mostrar(idreserva);
+        mostrar(idreserva); //le enviamos como parametro el idreserva
         deshabilitar();
         txtIdreserva.setText(idreserva);
         txtNombrecliente.setText(cliente);
@@ -689,13 +689,6 @@ public class frmPago extends javax.swing.JInternalFrame {
                         " Del Cliente " + txtNombrecliente.getText() + " Ha sido Realizado Exitosamente");
                 mostrar(idreserva);
                 deshabilitar();
-                
-                //Hacer que la habitacion se desocupe
-//                ctlhabitaciones funcion2 = new ctlhabitaciones();
-//                habitacion dts2 = new habitacion();
-//                
-//                dts2.setIdhabitacion(Integer.parseInt(txtIdhabitacion.getText()));
-//                funcion2.desocupar_habitacion(dts2);
                 
                 //Hacer que se pague o se cancele la reserva
                 ctlreserva funcion3 = new ctlreserva();

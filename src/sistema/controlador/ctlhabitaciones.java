@@ -135,7 +135,7 @@ public class ctlhabitaciones {
         }
     }
     
-    public DefaultTableModel mostrar_vista_habitaciones (String buscar){
+    public DefaultTableModel mostrar_vista (String buscar){
         DefaultTableModel modelo; //variable tipo defaultTableModel
         String [] titulos = {"ID","Número","Piso","Características","PrecioDiario","Estado","Tipo"};
         
@@ -143,9 +143,8 @@ public class ctlhabitaciones {
         totalregistros=0;
         modelo= new DefaultTableModel(null,titulos);
         
-        sSQL="SELECT * from habitacion where piso like '%"+buscar+"%' order by idhabitacion"; //Ademas que filtre por el 
-                                                                                                                      //piso que tambien filtre solamente 
-                                                                                                                      //los que estan disponibles   
+        sSQL="SELECT * from habitacion where piso like '%" + buscar + "%' order by idhabitacion"; 
+        
         try {
             Statement st= con.createStatement();
             ResultSet rs= st.executeQuery(sSQL);

@@ -34,7 +34,7 @@ public class frmVistaHabitaciones extends javax.swing.JFrame {
         try {
             DefaultTableModel modelo;
             ctlhabitaciones funcion= new ctlhabitaciones();
-            modelo = funcion.mostrar_vista_habitaciones(buscar);
+            modelo = funcion.mostrar_vista(buscar);
             
             tablalistado.setModel(modelo);
             ocultar_columnas();

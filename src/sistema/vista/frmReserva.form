@@ -566,11 +566,10 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="VIP"/>
-                <StringItem index="1" value="FAMILIAR"/>
-                <StringItem index="2" value="ALQUILER"/>
-                <StringItem index="3" value=" "/>
+              <StringArray count="3">
+                <StringItem index="0" value="INDIVIDUAL"/>
+                <StringItem index="1" value="VIP"/>
+                <StringItem index="2" value="FAMILIAR"/>
               </StringArray>
             </Property>
           </Properties>
