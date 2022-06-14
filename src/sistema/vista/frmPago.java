@@ -37,6 +37,7 @@ public class frmPago extends javax.swing.JInternalFrame {
         txtHabitacion.setText(habitacion);
         txtTotalreserva.setText(Double.toString(totalreserva));
         
+        
         ctlconsumo funcion = new ctlconsumo();  //hago una instancia a mi clase ctlconsumo para obtener el total de los consumos
         funcion.mostrar(idreserva); //mostrar solamente los consumos de la reserva en específica
         
@@ -44,12 +45,13 @@ public class frmPago extends javax.swing.JInternalFrame {
     }
     
     private String accion ="guardar"; //se declara una variable de tipo String para determinar una accion
-    //se declara 5 variables para asignarle valores 
+    //se declara 6 variables para asignarle valores 
     public static String idreserva;
     public static String cliente;
     public static String idhabitacion;
     public static String habitacion;
     public static Double totalreserva;
+    
     
     void ocultar_columnas(){                // la columna a no mostrar es de idpago
         tablalistado.getColumnModel().getColumn(0).setMaxWidth(0); 
@@ -770,6 +772,7 @@ public class frmPago extends javax.swing.JInternalFrame {
 
     private void txtIgvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIgvActionPerformed
         // TODO add your handling code here:
+        txtIgv.transferFocus();
     }//GEN-LAST:event_txtIgvActionPerformed
 
     private void txtTotalpagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotalpagoActionPerformed
