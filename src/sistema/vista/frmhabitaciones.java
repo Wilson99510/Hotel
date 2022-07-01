@@ -5,6 +5,20 @@
  */
 package sistema.vista;
 
+
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.awt.HeadlessException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import sistema.controlador.ctlhabitaciones;
@@ -24,16 +38,16 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
         mostrar("");
         deshabilitar();
     }
-    
-    private String accion ="guardar"; //se declara una variable de tipo String para determinar una accion
-    
-    void ocultar_columnas(){        // la columna a no mostrar es de idhabitacion
-        tablalistado.getColumnModel().getColumn(0).setMaxWidth(0); 
-        tablalistado.getColumnModel().getColumn(0).setMinWidth(0); 
+
+    private String accion = "guardar"; //se declara una variable de tipo String para determinar una accion
+
+    void ocultar_columnas() {        // la columna a no mostrar es de idhabitacion
+        tablalistado.getColumnModel().getColumn(0).setMaxWidth(0);
+        tablalistado.getColumnModel().getColumn(0).setMinWidth(0);
         tablalistado.getColumnModel().getColumn(0).setPreferredWidth(0);
     }
-    
-    void deshabilitar(){      //metodo para deshabilitar botones
+
+    void deshabilitar() {      //metodo para deshabilitar botones
         txtIdhabitacion.setVisible(false);
         cboPiso.setEnabled(false);
         txtNumero.setEnabled(false);
@@ -41,46 +55,48 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
         txtPreciodiario.setEnabled(false);
         cboEstado.setEnabled(false);
         cboTipodehabitacion.setEnabled(false);
-        
+
         btnGuardar.setEnabled(false);
         btnCancelar.setEnabled(false);
         btnEliminar.setEnabled(false);
         btnBuscar.setEnabled(false);
+        btnReporte.setEnabled(false);
         txtIdhabitacion.setText("");
         txtCaracteristicas.setText("");
-        txtPreciodiario.setText("");  
+        txtPreciodiario.setText("");
     }
-    
-    void habilitar(){       //metodo para habilitar botones
+
+    void habilitar() {       //metodo para habilitar botones
         txtIdhabitacion.setVisible(false);
-        
+
         cboPiso.setEnabled(true);
         txtNumero.setEnabled(true);
         txtCaracteristicas.setEnabled(true);
         txtPreciodiario.setEnabled(true);
         cboEstado.setEnabled(true);
         cboTipodehabitacion.setEnabled(true);
-        
+
         btnGuardar.setEnabled(true);
         btnCancelar.setEnabled(true);
         btnEliminar.setEnabled(true);
         btnBuscar.setEnabled(true);
+        btnReporte.setEnabled(true);
         txtIdhabitacion.setText("");
         txtCaracteristicas.setText("");
-        txtPreciodiario.setText("");  
+        txtPreciodiario.setText("");
     }
-    
-    void mostrar (String buscar){
+
+    void mostrar(String buscar) {
         try {
             DefaultTableModel modelo;
-            ctlhabitaciones funcion= new ctlhabitaciones();
+            ctlhabitaciones funcion = new ctlhabitaciones();
             modelo = funcion.mostrar(buscar);
-            
+
             tablalistado.setModel(modelo);
             ocultar_columnas();
             etiTotalregistros.setText("Total Registros: " + Integer.toString(funcion.totalregistros));
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             JOptionPane.showConfirmDialog(rootPane, e);
         }
     }
@@ -121,6 +137,7 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
         btnEliminar = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         etiTotalregistros = new javax.swing.JLabel();
+        btnReporte = new javax.swing.JButton();
 
         setTitle("HABITACIONES");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -376,6 +393,16 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
         etiTotalregistros.setForeground(new java.awt.Color(255, 255, 255));
         etiTotalregistros.setText("Registros");
 
+        btnReporte.setBackground(new java.awt.Color(102, 102, 102));
+        btnReporte.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnReporte.setForeground(new java.awt.Color(255, 255, 255));
+        btnReporte.setText("Reporte");
+        btnReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReporteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -391,8 +418,10 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
                         .addGap(33, 33, 33)
                         .addComponent(btnBuscar)
                         .addGap(18, 18, 18)
-                        .addComponent(btnEliminar)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnEliminar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnReporte)))
+                .addContainerGap(499, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(etiTotalregistros)
@@ -410,14 +439,15 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(btnSalir)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 311, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 315, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addGap(29, 29, 29)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnBuscar)
-                    .addComponent(btnEliminar))
+                    .addComponent(btnEliminar)
+                    .addComponent(btnReporte))
                 .addGap(46, 46, 46)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(47, 47, 47)
@@ -468,73 +498,72 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
         // TODO add your handling code here:
         habilitar();
         btnGuardar.setText("Guardar");
-        accion="guardar";
+        accion = "guardar";
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-        if (txtNumero.getText().length()== 0){
+        if (txtNumero.getText().length() == 0) {
             JOptionPane.showConfirmDialog(rootPane, "Ingresar Número de Habitación");
             txtNumero.requestFocus();
             return;
         }
-        
-        if (txtCaracteristicas.getText().length()== 0){
+
+        if (txtCaracteristicas.getText().length() == 0) {
             JOptionPane.showConfirmDialog(rootPane, "Ingresar Caracteristicas de Habitación");
             txtCaracteristicas.requestFocus();
             return;
         }
-        
-        if (txtPreciodiario.getText().length()== 0){
+
+        if (txtPreciodiario.getText().length() == 0) {
             JOptionPane.showConfirmDialog(rootPane, "Ingresar Precio Diario de Habitación");
             txtPreciodiario.requestFocus();
             return;
         }
-        
+
         habitacion dts = new habitacion();  //instanciamos la clase habitacion para crear un nuevo objeto
         ctlhabitaciones funcion = new ctlhabitaciones();    //instanciamos la clase ctlhabitaciones para llamar a todas las funciones
-        
+
         //empezamos a enviar los datos 
         dts.setNumero_habitacion(txtNumero.getText());
         //para enviar de un combo box, hay que seleccionar un indice y se declara una variable de tipo int llamado "seleccionado"
-        int seleccionado=cboPiso.getSelectedIndex();
+        int seleccionado = cboPiso.getSelectedIndex();
         dts.setPiso((String) cboPiso.getItemAt(seleccionado)); //se convierte a String por una incompatibilidad de valor
-        
+
         dts.setCaracteristicas(txtCaracteristicas.getText());
-        
+
         dts.setPrecio_diario(Double.parseDouble(txtPreciodiario.getText())); //se le agrega el Double ya que espera un valor numerico
-        
-        seleccionado=cboEstado.getSelectedIndex();
+
+        seleccionado = cboEstado.getSelectedIndex();
         dts.setEstado_habitacion((String) cboEstado.getItemAt(seleccionado));
-        
-        seleccionado=cboTipodehabitacion.getSelectedIndex();
+
+        seleccionado = cboTipodehabitacion.getSelectedIndex();
         dts.setTipo_habitacion((String) cboTipodehabitacion.getItemAt(seleccionado));
-        
-        
-        if  (accion.equals("guardar")){     //usuamos el equals para comparar cadena de caracteres
-            if(funcion.insertar(dts)){
-                JOptionPane.showMessageDialog(rootPane,"Registro Exitoso");
+
+        if (accion.equals("guardar")) {     //usuamos el equals para comparar cadena de caracteres
+            if (funcion.insertar(dts)) {
+                JOptionPane.showMessageDialog(rootPane, "Registro Exitoso");
                 mostrar("");
                 deshabilitar();
             }
-        }else if (accion.equals("modificar")){      //determinamos si la accion es modificar
+        } else if (accion.equals("modificar")) {      //determinamos si la accion es modificar
             dts.setIdhabitacion(Integer.parseInt(txtIdhabitacion.getText())); //Se convierte a entero por la incompatibilidad de varibles
-            if (funcion.modificar(dts)){
-                JOptionPane.showMessageDialog(rootPane,"Modificación Exitosa");
+            if (funcion.modificar(dts)) {
+                JOptionPane.showMessageDialog(rootPane, "Modificación Exitosa");
                 mostrar("");
                 deshabilitar();
-            }   
+            }
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
-        if(!txtIdhabitacion.getText().equals("")) { // si no es igual a (espacio en blanco) se procede a eliminar la habitacion
-            int confirmacion = JOptionPane.showConfirmDialog(rootPane, "Desea Eliminar la Habitación?","Confirmar",2);
-            
-            if(confirmacion==0){    
+        if (!txtIdhabitacion.getText().equals("")) { // si no es igual a (espacio en blanco) se procede a eliminar la habitacion
+            int confirmacion = JOptionPane.showConfirmDialog(rootPane, "Desea Eliminar la Habitación?", "Confirmar", 2);
+
+            if (confirmacion == 0) {
                 ctlhabitaciones funcion = new ctlhabitaciones();
-                habitacion dts= new habitacion();
+                habitacion dts = new habitacion();
                 dts.setIdhabitacion(Integer.parseInt(txtIdhabitacion.getText()));
                 funcion.eliminar(dts);
                 mostrar("");
@@ -544,9 +573,9 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
- //        // TODO add your handling code here:
+        //        // TODO add your handling code here:
         mostrar(txtBuscar.getText()); //le envia al metodo lo que se escribe en la caja de texto buscar
-        
+
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void txtNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumeroActionPerformed
@@ -564,7 +593,7 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
         btnGuardar.setText("Modificar");
         habilitar();
         btnEliminar.setEnabled(true);
-        accion="modificar";
+        accion = "modificar";
         int fila = tablalistado.rowAtPoint(evt.getPoint()); //punto o fila donde se hace clic en la variable fila
         txtIdhabitacion.setText(tablalistado.getValueAt(fila, 0).toString());
         txtNumero.setText(tablalistado.getValueAt(fila, 1).toString());
@@ -588,6 +617,45 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteActionPerformed
+        // TODO add your handling code here:
+       Document documento = new Document();
+
+        try {
+            String ruta = System.getProperty("user.home");
+            PdfWriter.getInstance(documento, new FileOutputStream(ruta + "/Documents/NetBeansProjects/dbhotel/Reporte_Habitacion.pdf"));
+            documento.open();
+
+            PdfPTable tabla = new PdfPTable(4);
+            tabla.addCell("NúmeroHabitación");
+            tabla.addCell("Piso");
+            tabla.addCell("Características");
+            tabla.addCell("PrecioDiario");
+            try {
+                Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3307/dbhotel", "root", "5975706");
+                PreparedStatement pst = cn.prepareStatement("SELECT numero_habitacion as NúmeroHabitación, piso as Piso, caracteristicas as Características, precio_diario as PrecioDiario FROM habitacion;");
+
+                ResultSet rs = pst.executeQuery();
+
+                if (rs.next()) {
+
+                    do {
+                        tabla.addCell(rs.getString(1));
+                        tabla.addCell(rs.getString(2));
+                        tabla.addCell(rs.getString(3));
+                        tabla.addCell(rs.getString(4));
+                    } while (rs.next());
+                    documento.add(tabla);
+                }
+
+            } catch (DocumentException | SQLException e) {
+            }
+            documento.close();
+            JOptionPane.showMessageDialog(null, "Reporte creado.");
+        } catch (DocumentException | HeadlessException | FileNotFoundException e) {
+        }
+    }//GEN-LAST:event_btnReporteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -630,6 +698,7 @@ public class frmhabitaciones extends javax.swing.JInternalFrame { //El JInternal
     public javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
+    public javax.swing.JButton btnReporte;
     public javax.swing.JButton btnSalir;
     private javax.swing.JComboBox<String> cboEstado;
     private javax.swing.JComboBox<String> cboPiso;

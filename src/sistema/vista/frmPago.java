@@ -5,7 +5,19 @@
  */
 package sistema.vista;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.awt.HeadlessException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import javax.swing.JOptionPane;
@@ -36,53 +48,51 @@ public class frmPago extends javax.swing.JInternalFrame {
         txtIdhabitacion.setText(idhabitacion);
         txtHabitacion.setText(habitacion);
         txtTotalreserva.setText(Double.toString(totalreserva));
-        
-        
+
         ctlconsumo funcion = new ctlconsumo();  //hago una instancia a mi clase ctlconsumo para obtener el total de los consumos
         funcion.mostrar(idreserva); //mostrar solamente los consumos de la reserva en específica
-        
+
         txtTotalpago.setText(Double.toString(totalreserva + funcion.totalconsumo));
     }
-    
-    private String accion ="guardar"; //se declara una variable de tipo String para determinar una accion
+
+    private String accion = "guardar"; //se declara una variable de tipo String para determinar una accion
     //se declara 6 variables para asignarle valores 
     public static String idreserva;
     public static String cliente;
     public static String idhabitacion;
     public static String habitacion;
     public static Double totalreserva;
-    
-    
-    void ocultar_columnas(){                // la columna a no mostrar es de idpago
-        tablalistado.getColumnModel().getColumn(0).setMaxWidth(0); 
-        tablalistado.getColumnModel().getColumn(0).setMinWidth(0); 
+
+    void ocultar_columnas() {                // la columna a no mostrar es de idpago
+        tablalistado.getColumnModel().getColumn(0).setMaxWidth(0);
+        tablalistado.getColumnModel().getColumn(0).setMinWidth(0);
         tablalistado.getColumnModel().getColumn(0).setPreferredWidth(0);
-                                    
-                                            // la columna a no mostrar es de idreserva
-        tablalistado.getColumnModel().getColumn(1).setMaxWidth(0); 
-        tablalistado.getColumnModel().getColumn(1).setMinWidth(0); 
+
+        // la columna a no mostrar es de idreserva
+        tablalistado.getColumnModel().getColumn(1).setMaxWidth(0);
+        tablalistado.getColumnModel().getColumn(1).setMinWidth(0);
         tablalistado.getColumnModel().getColumn(1).setPreferredWidth(0);
     }
-    
-    void ocultar_columnas_consumo(){        // la columna a no mostrar es de idconsumo
-        tablalistadoconsumo.getColumnModel().getColumn(0).setMaxWidth(0); 
-        tablalistadoconsumo.getColumnModel().getColumn(0).setMinWidth(0); 
+
+    void ocultar_columnas_consumo() {        // la columna a no mostrar es de idconsumo
+        tablalistadoconsumo.getColumnModel().getColumn(0).setMaxWidth(0);
+        tablalistadoconsumo.getColumnModel().getColumn(0).setMinWidth(0);
         tablalistadoconsumo.getColumnModel().getColumn(0).setPreferredWidth(0);
-                                    
-                                            // la columna a no mostrar es de idreserva
-        tablalistadoconsumo.getColumnModel().getColumn(1).setMaxWidth(0); 
-        tablalistadoconsumo.getColumnModel().getColumn(1).setMinWidth(0); 
+
+        // la columna a no mostrar es de idreserva
+        tablalistadoconsumo.getColumnModel().getColumn(1).setMaxWidth(0);
+        tablalistadoconsumo.getColumnModel().getColumn(1).setMinWidth(0);
         tablalistadoconsumo.getColumnModel().getColumn(1).setPreferredWidth(0);
-        
-                                            // la columna a no mostrar es de idproducto
-        tablalistadoconsumo.getColumnModel().getColumn(2).setMaxWidth(0); 
-        tablalistadoconsumo.getColumnModel().getColumn(2).setMinWidth(0); 
+
+        // la columna a no mostrar es de idproducto
+        tablalistadoconsumo.getColumnModel().getColumn(2).setMaxWidth(0);
+        tablalistadoconsumo.getColumnModel().getColumn(2).setMinWidth(0);
         tablalistadoconsumo.getColumnModel().getColumn(2).setPreferredWidth(0);
     }
-    
-    void deshabilitar(){      //metodo para deshabilitar botones
+
+    void deshabilitar() {      //metodo para deshabilitar botones
         txtIdpago.setVisible(false);
-        
+
         txtIdreserva.setVisible(false);
         txtNombrecliente.setEnabled(false);
         txtNumerocomprobante.setEnabled(false);
@@ -92,22 +102,22 @@ public class frmPago extends javax.swing.JInternalFrame {
         txtTotalreserva.setEnabled(false);
         jDateFechaemision.setEnabled(false);
         jDateFechapago.setEnabled(false);
-        
+
         txtIdhabitacion.setVisible(false);
         txtHabitacion.setEnabled(false);
-        
+
         btnGuardar.setEnabled(false);
         btnCancelar.setEnabled(false);
         btnEliminar.setEnabled(false);
         txtIdpago.setText("");
         txtIgv.setText("");
-        txtNumerocomprobante.setText("");  
+        txtNumerocomprobante.setText("");
         txtTotalpago.setText("");
     }
-    
-    void habilitar(){       //metodo para habilitar botones
+
+    void habilitar() {       //metodo para habilitar botones
         txtIdpago.setVisible(false);
-        
+
         txtIdreserva.setVisible(true);
         txtNombrecliente.setEnabled(true);
         txtNumerocomprobante.setEnabled(true);
@@ -117,27 +127,27 @@ public class frmPago extends javax.swing.JInternalFrame {
         txtTotalreserva.setEnabled(true);
         jDateFechaemision.setEnabled(true);
         jDateFechapago.setEnabled(true);
-        
+
         txtIdhabitacion.setVisible(true);
         txtHabitacion.setEnabled(true);
-        
+
         btnGuardar.setEnabled(true);
         btnCancelar.setEnabled(true);
         btnEliminar.setEnabled(true);
         txtIdpago.setText("");
         txtIgv.setText("");
-        txtNumerocomprobante.setText("");  
+        txtNumerocomprobante.setText("");
     }
-    
-    void mostrar (String buscar){
+
+    void mostrar(String buscar) {
         try {
             DefaultTableModel modelo;
-            ctlpago funcion= new ctlpago();
+            ctlpago funcion = new ctlpago();
             modelo = funcion.mostrar(buscar);
             tablalistado.setModel(modelo);
             ocultar_columnas();
             etiTotalregistros.setText("Total Pagos: " + Integer.toString(funcion.totalregistros));
-            
+
             //Vamos a mostrar los datos de los consumos
             ctlconsumo funcion2 = new ctlconsumo();
             modelo = funcion2.mostrar(buscar);
@@ -145,9 +155,8 @@ public class frmPago extends javax.swing.JInternalFrame {
             ocultar_columnas_consumo();
             etiTotalregistrosconsumo.setText("Total Consumos: " + funcion2.totalregistros);
             etiTotalconsumo.setText("Consumo Total: $." + funcion2.totalconsumo);
-            
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             JOptionPane.showConfirmDialog(rootPane, e);
         }
     }
@@ -192,13 +201,14 @@ public class frmPago extends javax.swing.JInternalFrame {
         btnEliminar = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         etiTotalregistros = new javax.swing.JLabel();
+        btnReporte = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tablalistadoconsumo = new javax.swing.JTable();
         etiTotalregistrosconsumo = new javax.swing.JLabel();
         etiTotalconsumo = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "REGISTRO DE PAGOS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Times New Roman", 1, 18), new java.awt.Color(255, 255, 255))); // NOI18N
@@ -498,6 +508,16 @@ public class frmPago extends javax.swing.JInternalFrame {
         etiTotalregistros.setForeground(new java.awt.Color(255, 255, 255));
         etiTotalregistros.setText("Registros");
 
+        btnReporte.setBackground(new java.awt.Color(102, 102, 102));
+        btnReporte.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnReporte.setForeground(new java.awt.Color(255, 255, 255));
+        btnReporte.setText("Reporte");
+        btnReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReporteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -505,6 +525,8 @@ public class frmPago extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(btnEliminar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnReporte)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSalir)
                 .addContainerGap())
@@ -521,7 +543,9 @@ public class frmPago extends javax.swing.JInternalFrame {
                     .addComponent(btnSalir)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btnEliminar)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnEliminar)
+                            .addComponent(btnReporte))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -633,24 +657,24 @@ public class frmPago extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         habilitar();
         btnGuardar.setText("Guardar");
-        accion="guardar";
+        accion = "guardar";
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-        if (txtIgv.getText().length()== 0){
+        if (txtIgv.getText().length() == 0) {
             JOptionPane.showConfirmDialog(rootPane, "Ingresar el IGV del Comprobante a ser Generado");
             txtIgv.requestFocus();
             return;
         }
 
-        if (txtTotalpago.getText().length()== 0){
+        if (txtTotalpago.getText().length() == 0) {
             JOptionPane.showConfirmDialog(rootPane, "Ingresar Total de Pago del Comprobante");
             txtTotalpago.requestFocus();
             return;
         }
 
-        if (txtNumerocomprobante.getText().length()== 0){
+        if (txtNumerocomprobante.getText().length() == 0) {
             JOptionPane.showConfirmDialog(rootPane, "Ingresar Número de Comprobante");
             txtNumerocomprobante.requestFocus();
             return;
@@ -661,49 +685,48 @@ public class frmPago extends javax.swing.JInternalFrame {
 
         //empezamos a enviar los datos
         dts.setIdreserva(Integer.parseInt(txtIdreserva.getText()));
-        
+
         //para enviar de un combo box, hay que seleccionar un indice y se declara una variable de tipo int llamado "seleccionado"
-        int seleccionado=cboTipocomprobante.getSelectedIndex();
+        int seleccionado = cboTipocomprobante.getSelectedIndex();
         dts.setTipo_comprobante((String) cboTipocomprobante.getItemAt(seleccionado));
         dts.setNum_comprobante(txtNumerocomprobante.getText());
 
         dts.setIgv(Double.parseDouble(txtIgv.getText())); //se le agrega el Double ya que espera un valor numerico
         dts.setTotal_pago(Double.parseDouble(txtTotalpago.getText())); //se le agrega el Double ya que espera un valor numerico
-        
-        Calendar calendar;  //Se declara un tipo de dato Calendar
-        int d,m,a;          //Se declara tres variables de tipo int para el dia,mes y año
-        calendar=jDateFechaemision.getCalendar();  //Obtener la fecha seleccionada
-        d=calendar.get(Calendar.DAY_OF_MONTH);  //Le decimos que obtenga un dia del mes
-        m=calendar.get(Calendar.MONTH);         //Le decimos que obtenga un mes
-        a=calendar.get(Calendar.YEAR)- 1900;
-        dts.setFecha_emision(new Date (a,m,d)); //Le convertimos a una Fecha con el new Date
-        
-        
-        calendar=jDateFechapago.getCalendar();  //Obtener la fecha seleccionada
-        d=calendar.get(Calendar.DAY_OF_MONTH);  //Le decimos que obtenga un dia del mes
-        m=calendar.get(Calendar.MONTH);         //Le decimos que obtenga un mes
-        a=calendar.get(Calendar.YEAR)- 1900;
-        dts.setFecha_pago(new Date (a,m,d)); //Le convertimos a una Fecha con el new Date
 
-        if  (accion.equals("guardar")){     //usamos el equals para comparar cadena de caracteres
-            if(funcion.insertar(dts)){
-                JOptionPane.showMessageDialog(rootPane,"El Pago por $. " + txtTotalpago.getText() + 
-                        " Del Cliente " + txtNombrecliente.getText() + " Ha sido Realizado Exitosamente");
+        Calendar calendar;  //Se declara un tipo de dato Calendar
+        int d, m, a;          //Se declara tres variables de tipo int para el dia,mes y año
+        calendar = jDateFechaemision.getCalendar();  //Obtener la fecha seleccionada
+        d = calendar.get(Calendar.DAY_OF_MONTH);  //Le decimos que obtenga un dia del mes
+        m = calendar.get(Calendar.MONTH);         //Le decimos que obtenga un mes
+        a = calendar.get(Calendar.YEAR) - 1900;
+        dts.setFecha_emision(new Date(a, m, d)); //Le convertimos a una Fecha con el new Date
+
+        calendar = jDateFechapago.getCalendar();  //Obtener la fecha seleccionada
+        d = calendar.get(Calendar.DAY_OF_MONTH);  //Le decimos que obtenga un dia del mes
+        m = calendar.get(Calendar.MONTH);         //Le decimos que obtenga un mes
+        a = calendar.get(Calendar.YEAR) - 1900;
+        dts.setFecha_pago(new Date(a, m, d)); //Le convertimos a una Fecha con el new Date
+
+        if (accion.equals("guardar")) {     //usamos el equals para comparar cadena de caracteres
+            if (funcion.insertar(dts)) {
+                JOptionPane.showMessageDialog(rootPane, "El Pago por $. " + txtTotalpago.getText()
+                        + " Del Cliente " + txtNombrecliente.getText() + " Ha sido Realizado Exitosamente");
                 mostrar(idreserva);
                 deshabilitar();
-                
+
                 //Hacer que se pague o se cancele la reserva
                 ctlreserva funcion3 = new ctlreserva();
                 reserva dts3 = new reserva();
-                
+
                 dts3.setIdreserva(Integer.parseInt(txtIdreserva.getText()));
                 funcion3.pagar_reserva(dts3);
             }
-        }else if (accion.equals("modificar")){      //determinamos si la accion es modificar
+        } else if (accion.equals("modificar")) {      //determinamos si la accion es modificar
             dts.setIdpago(Integer.parseInt(txtIdpago.getText())); //Se convierte a entero por la incompatibilidad de variables
-            if (funcion.modificar(dts)){
-                JOptionPane.showMessageDialog(rootPane,"El Pago del Cliente " + txtNombrecliente.getText() + 
-                        "Ha sido Modificado Exitosamente");
+            if (funcion.modificar(dts)) {
+                JOptionPane.showMessageDialog(rootPane, "El Pago del Cliente " + txtNombrecliente.getText()
+                        + "Ha sido Modificado Exitosamente");
                 mostrar(idreserva);
                 deshabilitar();
             }
@@ -720,11 +743,11 @@ public class frmPago extends javax.swing.JInternalFrame {
         btnGuardar.setText("Modificar");
         habilitar();
         btnEliminar.setEnabled(true);
-        accion="modificar";
+        accion = "modificar";
         int fila = tablalistado.rowAtPoint(evt.getPoint()); //punto o fila donde se hace clic en la variable fila
         txtIdpago.setText(tablalistado.getValueAt(fila, 0).toString());
 //        txtIdreserva.setText(tablalistado.getValueAt(fila, 1).toString());
-        
+
         cboTipocomprobante.setSelectedItem(tablalistado.getValueAt(fila, 2).toString());
         txtNumerocomprobante.setText(tablalistado.getValueAt(fila, 3).toString());
         txtIgv.setText(tablalistado.getValueAt(fila, 4).toString());
@@ -735,12 +758,12 @@ public class frmPago extends javax.swing.JInternalFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
-        if(!txtIdpago.getText().equals("")) { // si no es igual a (espacio en blanco) se procede a eliminar el producto
-            int confirmacion = JOptionPane.showConfirmDialog(rootPane, "Desea Eliminar el Pago?","Confirmar",2);
+        if (!txtIdpago.getText().equals("")) { // si no es igual a (espacio en blanco) se procede a eliminar el producto
+            int confirmacion = JOptionPane.showConfirmDialog(rootPane, "Desea Eliminar el Pago?", "Confirmar", 2);
 
-            if(confirmacion==0){
+            if (confirmacion == 0) {
                 ctlpago funcion = new ctlpago();
-                pago dts= new pago();
+                pago dts = new pago();
                 dts.setIdpago(Integer.parseInt(txtIdpago.getText()));
                 funcion.eliminar(dts);
                 mostrar(idreserva);     //mostrar solo los pagos que corresponda a la reserva seleccionada
@@ -783,6 +806,63 @@ public class frmPago extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tablalistadoconsumoMouseClicked
 
+    private void btnReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteActionPerformed
+        // TODO add your handling code here:
+        Document documento = new Document();
+
+        try {
+            String ruta = System.getProperty("user.home");
+            PdfWriter.getInstance(documento, new FileOutputStream(ruta + "/Documents/NetBeansProjects/dbhotel/Reporte_Comprobante.pdf"));
+            documento.open();
+
+            PdfPTable tabla = new PdfPTable(11);
+            tabla.addCell("Cantidad");
+            tabla.addCell("Descripción");
+            tabla.addCell("Cliente");
+            tabla.addCell("Num_Documento");
+            tabla.addCell("Dirección");
+            tabla.addCell("Costo_Reserva");
+            tabla.addCell("Tipo_Comprobante");
+            tabla.addCell("Num_Comprobante");
+            tabla.addCell("Total_Pago");
+            tabla.addCell("Fecha_Emisión");
+            tabla.addCell("Fecha_Pago");
+            try {
+                Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3307/dbhotel", "root", "5975706");
+                PreparedStatement pst = cn.prepareStatement("SELECT '1' as Cantidad, 'Reserva' as Descripcion, concat(u.nombre, ' ',u.apellido, '')as Cliente, u.numero_documento as Num_Documento, u.direccion as Dirección, r.costo_reserva as Costo_Reserva,\n"
+                        + "p.tipo_comprobante as Tipo_Comprobante, p.num_comprobante as Num_Comprobante, p.total_pago as Total_Pago, p.fecha_emision as Fecha_Emisión,\n"
+                        + "p.fecha_pago as Fecha_Pago FROM usuario u inner join cliente c on u.idpersona=c.idpersona\n"
+                        + "inner join reserva r on c.idpersona=r.idcliente inner join pago p on r.idreserva=p.idreserva where idpago=idpago");
+
+                ResultSet rs = pst.executeQuery();
+
+                if (rs.next()) {
+
+                    do {
+                        tabla.addCell(rs.getString(1));
+                        tabla.addCell(rs.getString(2));
+                        tabla.addCell(rs.getString(3));
+                        tabla.addCell(rs.getString(4));
+                        tabla.addCell(rs.getString(5));
+                        tabla.addCell(rs.getString(6));
+                        tabla.addCell(rs.getString(7));
+                        tabla.addCell(rs.getString(8));
+                        tabla.addCell(rs.getString(9));
+                        tabla.addCell(rs.getString(10));
+                        tabla.addCell(rs.getString(11));
+
+                    } while (rs.next());
+                    documento.add(tabla);
+                }
+
+            } catch (DocumentException | SQLException e) {
+            }
+            documento.close();
+            JOptionPane.showMessageDialog(null, "Reporte creado.");
+        } catch (DocumentException | HeadlessException | FileNotFoundException e) {
+        }
+    }//GEN-LAST:event_btnReporteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -823,6 +903,7 @@ public class frmPago extends javax.swing.JInternalFrame {
     public javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
+    public javax.swing.JButton btnReporte;
     public javax.swing.JButton btnSalir;
     private javax.swing.JComboBox<String> cboTipocomprobante;
     private javax.swing.JLabel etiTotalconsumo;

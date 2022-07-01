@@ -5,6 +5,18 @@
  */
 package sistema.vista;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.awt.HeadlessException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import sistema.controlador.ctlproducto;
@@ -118,6 +130,7 @@ public class frmProducto extends javax.swing.JInternalFrame { //El JInternalFram
         btnEliminar = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         etiTotalregistros = new javax.swing.JLabel();
+        btnReporte = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PRODUCTOS");
@@ -333,6 +346,16 @@ public class frmProducto extends javax.swing.JInternalFrame { //El JInternalFram
         etiTotalregistros.setForeground(new java.awt.Color(255, 255, 255));
         etiTotalregistros.setText("Registros");
 
+        btnReporte.setBackground(new java.awt.Color(102, 102, 102));
+        btnReporte.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnReporte.setForeground(new java.awt.Color(255, 255, 255));
+        btnReporte.setText("Reporte");
+        btnReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReporteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -348,8 +371,10 @@ public class frmProducto extends javax.swing.JInternalFrame { //El JInternalFram
                         .addGap(33, 33, 33)
                         .addComponent(btnBuscar)
                         .addGap(18, 18, 18)
-                        .addComponent(btnEliminar)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnEliminar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnReporte)))
+                .addContainerGap(401, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(etiTotalregistros)
@@ -367,14 +392,15 @@ public class frmProducto extends javax.swing.JInternalFrame { //El JInternalFram
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(btnSalir)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 309, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 313, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addGap(29, 29, 29)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnBuscar)
-                    .addComponent(btnEliminar))
+                    .addComponent(btnEliminar)
+                    .addComponent(btnReporte))
                 .addGap(46, 46, 46)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(47, 47, 47)
@@ -528,6 +554,45 @@ public class frmProducto extends javax.swing.JInternalFrame { //El JInternalFram
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    private void btnReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteActionPerformed
+        // TODO add your handling code here:
+        Document documento = new Document();
+
+        try {
+            String ruta = System.getProperty("user.home");
+            PdfWriter.getInstance(documento, new FileOutputStream(ruta + "/Documents/NetBeansProjects/dbhotel/Reporte_Producto.pdf"));
+            documento.open();
+
+            PdfPTable tabla = new PdfPTable(4);
+            tabla.addCell("NombreProducto");
+            tabla.addCell("Descripción");
+            tabla.addCell("UnidadMedida");
+            tabla.addCell("PrecioVenta");
+            try {
+                Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3307/dbhotel", "root", "5975706");
+                PreparedStatement pst = cn.prepareStatement("SELECT nombre as NombreProducto, descripcion as Descripción, uni_medida as UnidadMedida, precio_venta as PrecioVenta FROM producto;");
+
+                ResultSet rs = pst.executeQuery();
+
+                if (rs.next()) {
+
+                    do {
+                        tabla.addCell(rs.getString(1));
+                        tabla.addCell(rs.getString(2));
+                        tabla.addCell(rs.getString(3));
+                        tabla.addCell(rs.getString(4));
+                    } while (rs.next());
+                    documento.add(tabla);
+                }
+
+            } catch (DocumentException | SQLException e) {
+            }
+            documento.close();
+            JOptionPane.showMessageDialog(null, "Reporte creado.");
+        } catch (DocumentException | HeadlessException | FileNotFoundException e) {
+        }
+    }//GEN-LAST:event_btnReporteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -569,6 +634,7 @@ public class frmProducto extends javax.swing.JInternalFrame { //El JInternalFram
     public javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
+    public javax.swing.JButton btnReporte;
     public javax.swing.JButton btnSalir;
     private javax.swing.JComboBox<String> cboUni_medida;
     private javax.swing.JLabel etiTotalregistros;
